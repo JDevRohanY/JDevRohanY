@@ -93,6 +93,7 @@ public class FakeProductService implements ProductService {
 
     @Override
     public Product UpdateProduct(Long id, String title, double price, String description, String image, String category) {
+        //This method of patch is throwing an error of Invalid HTTP method: PATCH
         FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
         fakeStoreProductDto.setTitle(title);
         fakeStoreProductDto.setDescription(description);
