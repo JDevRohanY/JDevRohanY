@@ -2,6 +2,8 @@ package com.rohan.productservice.controllers;
 
 import com.rohan.productservice.dtos.CreateProductRequestDto;
 import com.rohan.productservice.dtos.FakeStoreProductDto;
+import com.rohan.productservice.dtos.UpdateProductRequestDto;
+import com.rohan.productservice.models.Category;
 import com.rohan.productservice.models.Product;
 import com.rohan.productservice.services.ProductService;
 import org.springframework.http.HttpStatusCode;
@@ -42,7 +44,20 @@ public class ProductController {
         return productService.getSingleProduct(id);
     }
 
-    public void deleteProductById(Long id){
+    @GetMapping("/products/categories")
+    public ResponseEntity<List<Category>> getAllCategories(){
+        ResponseEntity<List<Category>> responseEntity = new ResponseEntity<>(productService.getAllCategories(), HttpStatusCode.valueOf(202));
+        return responseEntity;
+    }
 
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.PATCH)
+    public Product updateProduct(@PathVariable("id") Long id,@RequestBody UpdateProductRequestDto updateProductRequestDto){
+        return productService.UpdateProduct(
+                id,
+                updateProductRequestDto.getTitle(),
+                updateProductRequestDto.getPrice(),
+                updateProductRequestDto.getImage(),
+                updateProductRequestDto.getDescription(),
+                updateProductRequestDto.getCategory());
     }
 }

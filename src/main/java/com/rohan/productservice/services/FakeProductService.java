@@ -1,5 +1,6 @@
 package com.rohan.productservice.services;
 
+import com.rohan.productservice.dtos.FakeStoreCategoryDto;
 import com.rohan.productservice.dtos.FakeStoreProductDto;
 import com.rohan.productservice.models.Category;
 import com.rohan.productservice.models.Product;
@@ -35,6 +36,7 @@ public class FakeProductService implements ProductService {
                         fakeStoreProductDto,
                         FakeStoreProductDto.class
                 );
+        assert response != null;
         return response.toProduct();
     }
 
@@ -54,7 +56,7 @@ public class FakeProductService implements ProductService {
         product.setImageURL(fakeStoreProductDto.getImage());
 
         Category category = new Category();
-        category.setTitle(fakeStoreProductDto.getTitle());
+        category.setCategoryName(fakeStoreProductDto.getTitle());
         product.setCategory(category);
         return product;
     }
@@ -73,5 +75,35 @@ public class FakeProductService implements ProductService {
             products.add(fakeStoreProductDto.toProduct());
         }
         return products;
+    }
+
+    @Override
+    public List<Category> getAllCategories() {
+        //The response is not returning me array of object, it is just returning me the array of string that's why we cannot use array of object
+        String[] response = restTemplate.getForObject("https://fakestoreapi.com/products/categories",
+                String[].class);
+        List<Category> categories = new ArrayList<>();
+        assert response!=null;
+        for(String categoryName: response){
+            FakeStoreCategoryDto fakeStoreCategoryDto = new FakeStoreCategoryDto(categoryName);
+            categories.add(fakeStoreCategoryDto.toCategory());
+        }
+        return categories;
+    }
+
+    @Override
+    public Product UpdateProduct(Long id, String title, double price, String description, String image, String category) {
+        FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
+        fakeStoreProductDto.setTitle(title);
+        fakeStoreProductDto.setDescription(description);
+        fakeStoreProductDto.setImage(image);
+        fakeStoreProductDto.setCategory(category);
+
+        FakeStoreProductDto response = restTemplate.patchForObject(
+                "https://fakestoreapi.com/products/"+ id,
+                fakeStoreProductDto,
+                FakeStoreProductDto.class);
+        assert response != null;
+        return response.toProduct();
     }
 }
